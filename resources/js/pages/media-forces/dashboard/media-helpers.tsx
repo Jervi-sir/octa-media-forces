@@ -1,3 +1,4 @@
+import MediaVideoController from "@/actions/App/Http/Controllers/MediaForce/MediaVideoController";
 import { cn } from "@/lib/utils";
 
 export type StepStatus = "current" | "success" | "failed" | "pending";
@@ -59,6 +60,6 @@ export function statusColor(dbStatus: ServerVideo["status"]) {
 }
 
 export const ENDPOINTS = {
-  upload: "/media/videos/upload",
-  store: "/media/videos/store",
+  upload: MediaVideoController.upload().url,
+  store: MediaVideoController.store().url,
 };

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Link, router, useForm } from "@inertiajs/react";
 import { useMobileNavigation } from "@/hooks/use-mobile-navigation";
-import MediaAuthController from "@/actions/App/Http/Controllers/MediaAuthController";
+import MediaAuthController from "@/actions/App/Http/Controllers/MediaForce/MediaAuthController";
 
 type Lang = "en" | "fr" | "ar";
 

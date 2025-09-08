@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MediaForce;
 
+use App\Http\Controllers\Controller;
 use App\Models\MediaForce;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ class MediaAuthController extends Controller
 {
   public function showLogin()
   {
-    return Inertia::render('media/auth/login');
+    return Inertia::render('media-forces/auth/login');
   }
 
   public function login(Request $r)
@@ -27,7 +28,7 @@ class MediaAuthController extends Controller
 
   public function showRegister()
   {
-    return Inertia::render('media/auth/register');
+    return Inertia::render('media-forces/auth/register');
   }
 
   public function register(Request $r)

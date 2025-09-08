@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MediaForce;
 
+use App\Http\Controllers\Controller;
 use App\Models\MediaForceVideo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,55 +16,15 @@ class MediaVideoController extends Controller
     {
         $mf = Auth::user();
         $videos = $mf->videos()->orderBy('slot_number')->get();
-        return Inertia::render('media/videos/index', ['videos' => $videos]);
+        return Inertia::render('media-forces/videos/index', ['videos' => $videos]);
     }
 
     public function show(int $slot)
     {
         $mf = Auth::user();
         $video = $mf->videos()->where('slot_number', $slot)->firstOrFail();
-        return Inertia::render('media/videos/show', ['video' => $video]);
+        return Inertia::render('media-forces/videos/show', ['video' => $video]);
     }
-
-    // public function store(Request $r, int $slot)
-    // {
-    //     $mf = Auth::user();
-    //     $data = $r->validate([
-    //         'title' => 'nullable|string|max:120',
-    //         'description' => 'nullable|string|max:2000',
-    //         'file' => 'nullable|file|mimetypes:video/mp4,video/quicktime,video/x-matroska|max:512000', // ~500MB
-    //         'thumbnail' => 'nullable|image|max:5120',
-    //         'duration_seconds' => 'nullable|integer|min:0',
-    //     ]);
-
-    //     $video = $mf->videos()->firstOrCreate(['slot_number' => $slot], []);
-
-    //     if ($r->hasFile('file')) {
-    //         if ($video->file_path) Storage::disk('public')->delete($video->file_path);
-    //         $data['file_path'] = $r->file('file')->store("media/{$mf->id}/videos", 'public');
-    //         // reset status back to draft on new upload if previously approved?
-    //         if (in_array($video->status, ['approved', 'rejected', 'changes_requested'])) {
-    //             $data['status'] = 'draft';
-    //             $data['submitted_at'] = null;
-    //         }
-    //     }
-    //     if ($r->hasFile('thumbnail')) {
-    //         if ($video->thumbnail_path) Storage::disk('public')->delete($video->thumbnail_path);
-    //         $data['thumbnail_path'] = $r->file('thumbnail')->store("media/{$mf->id}/thumbs", 'public');
-    //     }
-
-    //     $video->update($data);
-    //     return back()->with('success', 'Saved.');
-    // }
-
-    // public function submit(Request $r, int $slot)
-    // {
-    //     $mf = Auth::user();
-    //     $video = $mf->videos()->where('slot_number', $slot)->firstOrFail();
-    //     if (!$video->file_path) return back()->withErrors(['file' => 'Upload a video before submitting.']);
-    //     $video->update(['status' => 'submitted', 'submitted_at' => now(), 'review_feedback' => null, 'reviewer_id' => null]);
-    //     return back()->with('success', 'Submitted for review.');
-    // }
 
     /** Direct upload endpoint (returns stored path + URL) */
     public function upload(Request $req)

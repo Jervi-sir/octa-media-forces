@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\MediaForce;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -32,7 +33,7 @@ class MediaDashboardController extends Controller
                 'feedback'     => $v->review_feedback,
             ]);
 
-        return Inertia::render('media/dashboard/index', [
+        return Inertia::render('media-forces/dashboard/index', [
             'mediaForce' => $mf->only('id','name','email'),
             'videos'     => $videos,
         ]);

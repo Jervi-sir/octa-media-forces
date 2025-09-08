@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Mail, Lock, User, Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
-import MediaAuthController from "@/actions/App/Http/Controllers/MediaAuthController";
+import MediaAuthController from "@/actions/App/Http/Controllers/MediaForce/MediaAuthController";
 import { useForm } from "@inertiajs/react";
+import { ParallaxGlow } from "@/components/parallax-glow";
 
 // Reuse glass styles from MediaForceScreen (paste if not globally shared)
 const glass = "backdrop-blur-xl bg-white/3 border border-white/20 shadow-[0_1px_0_rgba(255,255,255,0.55),0_10px_30px_-12px_rgba(0,0,0,0.35)]";
@@ -54,11 +55,7 @@ export default function AuthGlassScreen() {
   return (
     <div className="min-h-screen text-white relative overflow-hidden">
       {/* iOS 2025 gradient orbs */}
-      <div className="pointer-events-none absolute inset-0">
-        <div className="absolute -top-40 -left-32 h-[560px] w-[560px] rounded-full bg-[radial-gradient(closest-side,rgba(120,119,198,0.45),rgba(120,119,198,0)_70%)] blur-2xl" />
-        <div className="absolute -bottom-32 -right-24 h-[560px] w-[560px] rounded-full bg-[radial-gradient(closest-side,rgba(56,189,248,0.45),rgba(56,189,248,0)_70%)] blur-2xl" />
-        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))]" />
-      </div>
+      <ParallaxGlow />
 
       {/* Centered auth card */}
       <div className="mx-auto flex min-h-screen w-full max-w-6xl items-center justify-center px-6 py-12">

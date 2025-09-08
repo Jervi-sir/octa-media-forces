@@ -17,21 +17,21 @@
   - EnsureAdmin @done
   - register in the bootstrap/app.php @done
 
-- MediaAuthController
-  - showLogin
-  - login
-  - logout
-  - ShowRegister
-  - register
+- MediaAuthController @done
+  - showLogin @done
+  - login @done
+  - logout @done
+  - ShowRegister @done
+  - register @done
 
-- MediaDashboardController
-  - show overview of videos
+- MediaDashboardController @done
+  - show overview of videos @done
 
-- MediaVideoController
-  - index
-  - show
-  - store
-  - submit
+- MediaVideoController @done
+  - index @done
+  - show @done
+  - store @done
+  - submit @done
 
 - AdminVideoReviewController
   - index
@@ -41,16 +41,17 @@
   - reject
 
 ---- front end
-- media auth
-  - login
-  - reigster
+- media auth @done
+  - login @done
+  - reigster @done
 
-- media videos
-  - index
-  - show
+- media videos @done
+  - index @done
+  - show @done
 
 - admin reviews
   - index
   - show
 
-- do shadcnui 
+- do shadcnui @done
+- 
