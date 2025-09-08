@@ -1,0 +1,56 @@
+- create migrations @done
+  - media_forces @done
+  - add is_admin to users @done
+  - media_force_videos @done
+  - migrate them @done
+
+- create models @done
+  - MediaForce @done
+  - MediaForceVideo @done
+  - and rls @done
+
+- auth config @done
+  - config/auth the media_force @done
+    - and password too @done
+- add middleware @done
+  - AuthenticateMediaForce @done
+  - EnsureAdmin @done
+  - register in the bootstrap/app.php @done
+
+- MediaAuthController
+  - showLogin
+  - login
+  - logout
+  - ShowRegister
+  - register
+
+- MediaDashboardController
+  - show overview of videos
+
+- MediaVideoController
+  - index
+  - show
+  - store
+  - submit
+
+- AdminVideoReviewController
+  - index
+  - show
+  - approve
+  - requestChanges
+  - reject
+
+---- front end
+- media auth
+  - login
+  - reigster
+
+- media videos
+  - index
+  - show
+
+- admin reviews
+  - index
+  - show
+
+- do shadcnui 
