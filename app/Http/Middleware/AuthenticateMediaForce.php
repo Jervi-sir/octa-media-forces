@@ -17,7 +17,7 @@ class AuthenticateMediaForce
     public function handle($request, Closure $next)
     {
         if (! Auth::guard('media_forces')->check()) {
-            return redirect()->route('media.login');
+            return redirect()->route('media_forces.login');
         }
         return $next($request);
     }

@@ -49,9 +49,12 @@
   - index @done
   - show @done
 
-- admin reviews
-  - index
-  - show
+- admin reviews @done
+  - index @done
+  - show @done
+  - try streaming @done
+  - make video with a popup @done
+  - generate a thumbnail for the video @done
+  - add guard to the admin side
 
-- do shadcnui @done
 - 

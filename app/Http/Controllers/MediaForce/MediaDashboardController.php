@@ -28,6 +28,7 @@ class MediaDashboardController extends Controller
                 'file_path'    => $v->file_path,
                 'public_url'   => $v->public_url,   // accessor
                 'status'       => $v->status,
+                'review_feedback' => $v->review_feedback,
                 'submitted_at' => optional($v->submitted_at)->toIso8601String(),
                 'reviewed_at'  => optional($v->reviewed_at)->toIso8601String(),
                 'feedback'     => $v->review_feedback,

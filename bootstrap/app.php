@@ -25,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
             AddLinkHeadersForPreloadedAssets::class,
         ]);
         $middleware->alias([
-            'auth.media_forces' => AuthenticateMediaForce::class,
+            'media_forces' => AuthenticateMediaForce::class,
             'admin'      => EnsureAdmin::class,
         ]);
     })

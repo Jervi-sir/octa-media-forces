@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
+use Illuminate\Support\Str;
+use Symfony\Component\Process\Process;
 
 class MediaVideoController extends Controller
 {
@@ -30,38 +32,74 @@ class MediaVideoController extends Controller
     public function upload(Request $req)
     {
         $req->validate([
-            'file' => ['required','file','mimetypes:video/mp4,video/quicktime,video/x-matroska,video/webm','max:512000'], // ~500MB
+            'file' => ['required', 'file', 'mimetypes:video/mp4,video/quicktime,video/x-matroska,video/webm', 'max:512000'],
+            'generate_thumbnail' => ['sometimes', 'boolean'], // optional
         ]);
 
-        $user = Auth::user(); // authenticated media_force
-        $disk = config('filesystems.default', 'public'); // use s3/public as you like
+        $user = Auth::user();
+        $disk = config('filesystems.default', 'public');
 
-        // Store under /media_forces/{id}/YYYY/MM/
-        $dir = 'media_forces/'.$user->id.'/'.now()->format('Y/m');
+        $dir = 'media_forces/' . $user->id . '/' . now()->format('Y/m');
         $path = $req->file('file')->store($dir, $disk);
 
-        return response()->json([
-            'disk'       => $disk,
-            'file_path'  => $path,
-            'public_url' => Storage::disk($disk)->url($path),
-        ]);
+        $response = [
+            'disk'         => $disk,
+            'file_path'    => $path,
+            // 'public_url'   => Storage::disk($disk)->url($path),
+            'thumbnail_path'   => 'null',
+            // 'thumbnail_url'   => null,
+        ];
+
+        if (false) {
+            $fullPath = Storage::disk($disk)->path($path);
+
+            $thumbName = pathinfo($path, PATHINFO_FILENAME) . '.jpg';
+            $thumbPath = $dir . '/thumbs/' . $thumbName;
+            $thumbFullPath = Storage::disk($disk)->path($thumbPath);
+
+            Storage::disk($disk)->makeDirectory($dir . '/thumbs');
+
+            $process = new Process([
+                'ffmpeg',
+                '-y',
+                '-i',
+                $fullPath,
+                '-ss',
+                '00:00:02',
+                '-vframes',
+                '1',
+                $thumbFullPath
+            ]);
+            $process->run();
+
+            if (!$process->isSuccessful()) {
+                throw new \RuntimeException('Thumbnail generation failed: ' . $process->getErrorOutput());
+            }
+
+            $response['thumbnail_path'] = $thumbPath;
+            // $response['thumbnail_url']  = Storage::disk($disk)->url($thumbPath);
+        }
+
+        return response()->json($response);
     }
+
 
     /** Persist DB row after upload is done and user clicks Done */
     public function store(Request $req)
     {
         $req->validate([
-            'slot_number'     => ['required','integer','min:1','max:11'],
-            'title'           => ['nullable','string','max:255'],
-            'description'     => ['nullable','string'],
-            'file_path'       => ['required','string'],
-            'status'          => ['nullable', Rule::in(['draft','submitted'])], // usually submitted on Done
+            'slot_number'     => ['required', 'integer', 'min:1', 'max:11'],
+            'title'           => ['nullable', 'string', 'max:255'],
+            'description'     => ['nullable', 'string'],
+            'file_path'       => ['required', 'string'],
+            'thumbnail_path'  => ['nullable', 'string'],
+            'status'          => ['nullable', Rule::in(['draft', 'submitted'])], // usually submitted on Done
         ]);
 
         $user = Auth::user();
 
         // Ensure this path is indeed under the user's folder (basic guard-rail)
-        if (!str_starts_with($req->file_path, 'media_forces/'.$user->id.'/')) {
+        if (!str_starts_with($req->file_path, 'media_forces/' . $user->id . '/')) {
             return response()->json(['message' => 'Invalid file ownership.'], 422);
         }
 
@@ -72,6 +110,7 @@ class MediaVideoController extends Controller
                 'title'            => $req->input('title'),
                 'description'      => $req->input('description'),
                 'file_path'        => $req->input('file_path'),
+                'thumbnail_path'   => $req->input('thumbnail_path'),
                 // you can fill these later with a Job (ffmpeg) that inspects file:
                 // 'thumbnail_path' => ...,
                 // 'duration_seconds' => ...,
@@ -88,5 +127,4 @@ class MediaVideoController extends Controller
             'video' => $video,
         ]);
     }
-
 }

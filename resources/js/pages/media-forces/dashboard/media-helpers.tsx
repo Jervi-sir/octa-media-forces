@@ -5,15 +5,16 @@ export type StepStatus = "current" | "success" | "failed" | "pending";
 
 export type ServerVideo = {
   id: number;
-  slot_number: number; // 1..11
+  slot_number: number;
   title?: string | null;
   description?: string | null;
   file_path?: string | null;
-  public_url?: string | null;
+  thumbnail_path?: string | null;
   status: "draft" | "submitted" | "approved" | "changes_requested" | "rejected";
   submitted_at?: string | null;
   reviewed_at?: string | null;
   feedback?: string | null;
+  review_feedback?: string | null; // <- add this if you prefer strict typing
 };
 
 export type PageProps = {

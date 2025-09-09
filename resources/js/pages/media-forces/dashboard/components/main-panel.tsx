@@ -2,12 +2,49 @@ import React, { useContext } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import { AlertCircleIcon } from "lucide-react";
+import { cn, formatMediaUrl } from "@/lib/utils";
+import { AlertCircleIcon, CheckCircle2, Hourglass } from "lucide-react";
 import { glass, glassSoft } from "../media-helpers";
 import { MediaDashboardContext } from "../media-dashboard-context";
 import { StatusPill } from "./status-pill";
 import { Dropzone } from "./dropzone";
+
+/** Color system for the feedback panel by status */
+const panelClassFor = (status: "draft" | "submitted" | "approved" | "changes_requested" | "rejected") => {
+  switch (status) {
+    case "approved":
+      return "bg-emerald-500/10 border-emerald-400/30 text-emerald-100";
+    case "submitted":
+      return "bg-amber-500/10 border-amber-400/30 text-amber-100";
+    case "changes_requested":
+      return "bg-orange-500/10 border-orange-400/30 text-orange-100";
+    case "rejected":
+      return "bg-rose-500/10 border-rose-400/30 text-rose-100";
+    default:
+      return "bg-white/10 border-white/20 text-white";
+  }
+};
+
+const titleFor = (status: "draft" | "submitted" | "approved" | "changes_requested" | "rejected") => {
+  switch (status) {
+    case "approved":
+      return "Approved";
+    case "submitted":
+      return "Submitted — Under review";
+    case "changes_requested":
+      return "Changes requested";
+    case "rejected":
+      return "Rejected";
+    default:
+      return "Draft";
+  }
+};
+
+const iconFor = (status: "draft" | "submitted" | "approved" | "changes_requested" | "rejected") => {
+  if (status === "approved") return <CheckCircle2 className="h-4 w-4" />;
+  if (status === "submitted") return <Hourglass className="h-4 w-4" />;
+  return <AlertCircleIcon className="h-4 w-4" />;
+};
 
 export function MainPanel() {
   const ctx = useContext(MediaDashboardContext);
@@ -15,12 +52,16 @@ export function MainPanel() {
 
   const {
     videos, active, uploadProgress, uploaded, storeTitle, setStoreTitle,
-    titleDirty, setTitleDirty, handleClear, handleDone, saving, prev, next, files, setFiles
+    titleDirty, setTitleDirty, handleClear, handleDone, saving, prev, next, setFiles
   } = ctx;
 
   const rowForSlot = (videos ?? []).find((r) => r.slot_number === active.slot);
-  const existingUrl = rowForSlot?.public_url || null;
-  const linkUrl = uploaded?.public_url ?? existingUrl;
+  const linkUrl = uploaded?.file_path || rowForSlot?.file_path || null;
+  const thumbnailPreviewUrl = uploaded?.thumbnail_path || rowForSlot?.thumbnail_path || null;
+
+  // Support both `review_feedback` and `feedback`
+  const reviewFeedback: string | null =
+    ((rowForSlot as any)?.review_feedback ?? rowForSlot?.feedback ?? null) || null;
 
   const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!titleDirty) setTitleDirty(true);
@@ -38,8 +79,13 @@ export function MainPanel() {
           {rowForSlot && (
             <>
               <StatusPill dbStatus={rowForSlot.status} />
-              {rowForSlot.public_url ? (
-                <a className="underline decoration-dotted" href={rowForSlot.public_url!} target="_blank" rel="noreferrer">
+              {rowForSlot.file_path ? (
+                <a
+                  className="underline decoration-dotted"
+                  href={formatMediaUrl(rowForSlot.file_path!)}
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   View current file
                 </a>
               ) : null}
@@ -62,11 +108,22 @@ export function MainPanel() {
           </div>
         )}
 
-        {linkUrl && (
-          <div className="text-xs text-white/80">
-            {uploaded ? "Uploaded" : "Existing"}:{" "}
-            <a href={linkUrl} className="underline" target="_blank" rel="noreferrer">preview</a>
-            <div className="opacity-70">Slot #{active.slot}</div>
+        {(linkUrl || thumbnailPreviewUrl) && (
+          <div className="text-xs text-white/80 flex flex-col gap-2">
+            <div>
+              {uploaded ? "Uploaded" : "Existing"}:{" "}
+              <a className="underline" href={formatMediaUrl(linkUrl!)} target="_blank" rel="noreferrer">
+                preview
+              </a>
+              <div className="opacity-70">Slot #{active.slot}</div>
+            </div>
+            {thumbnailPreviewUrl && (
+              <img
+                src={formatMediaUrl(thumbnailPreviewUrl)}
+                alt="Thumbnail"
+                className="max-h-40 w-auto rounded-lg border border-white/15"
+              />
+            )}
           </div>
         )}
       </div>
@@ -87,13 +144,21 @@ export function MainPanel() {
         </div>
       </div>
 
-      {/* Feedback */}
-      {rowForSlot && (rowForSlot.status === "changes_requested" || rowForSlot.status === "rejected") && (
-        <Alert className={cn("mt-5 rounded-2xl", "bg-white/10 border-white/20 text-white")}>
-          <AlertCircleIcon className="h-4 w-4" />
-          <AlertTitle>{rowForSlot.status === "rejected" ? "Rejected" : "Changes requested"}</AlertTitle>
+      {/* Review / status panel */}
+      {rowForSlot && (reviewFeedback || rowForSlot.status !== "draft") && (
+        <Alert className={cn("mt-5 rounded-2xl", panelClassFor(rowForSlot.status), "border")}>
+          {iconFor(rowForSlot.status)}
+          <AlertTitle className="font-semibold">{titleFor(rowForSlot.status)}</AlertTitle>
           <AlertDescription className="whitespace-pre-wrap">
-            {rowForSlot.feedback || "Please update and resubmit this slot."}
+            {reviewFeedback
+              ? reviewFeedback
+              : rowForSlot.status === "submitted"
+              ? "Your video is waiting for review."
+              : rowForSlot.status === "approved"
+              ? "This video has been approved."
+              : rowForSlot.status === "draft"
+              ? "Not submitted yet."
+              : "Please update and resubmit this slot."}
           </AlertDescription>
         </Alert>
       )}

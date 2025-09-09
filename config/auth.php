@@ -44,6 +44,11 @@ return [
             'driver' => 'session',
             'provider' => 'media_forces',
         ],
+        'admin' => [
+            'driver' => 'session',
+            'provider' => 'admins',
+        ],
+
     ],
 
     /*

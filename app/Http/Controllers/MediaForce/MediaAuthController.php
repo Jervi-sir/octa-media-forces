@@ -21,7 +21,7 @@ class MediaAuthController extends Controller
     $cred = $r->validate(['email' => 'required|email', 'password' => 'required']);
     if (Auth::guard('media_forces')->attempt($cred, $r->boolean('remember'))) {
       $r->session()->regenerate();
-      return redirect()->route('media.dashboard');
+      return redirect()->route('media_forces.dashboard');
     }
     return back()->withErrors(['email' => 'Invalid credentials.']);
   }
@@ -52,7 +52,7 @@ class MediaAuthController extends Controller
     }
 
     Auth::guard('media_forces')->login($mf);
-    return redirect()->route('media.dashboard');
+    return redirect()->route('media_forces.dashboard');
   }
 
   public function logout(Request $r)
@@ -60,6 +60,6 @@ class MediaAuthController extends Controller
     Auth::guard('media_forces')->logout();
     $r->session()->invalidate();
     $r->session()->regenerateToken();
-    return redirect()->route('media.login');
+    return redirect()->route('media_forces.login');
   }
 }
