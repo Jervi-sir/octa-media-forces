@@ -49,6 +49,23 @@ return [
             'provider' => 'admins',
         ],
 
+        'ots' => [
+            'driver' => 'session',
+            'provider' => 'ots',
+        ],
+        'ogms' => [
+            'driver' => 'session',
+            'provider' => 'ogms',
+        ],
+        'ops' => [
+            'driver' => 'session',
+            'provider' => 'ops',
+        ],
+        'os' => [
+            'driver' => 'session',
+            'provider' => 'os',
+        ],
+
     ],
 
     /*
@@ -81,6 +98,22 @@ return [
         //     'driver' => 'database',
         //     'table' => 'users',
         // ],
+        'ots' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Ot::class,
+        ],
+        'ogms' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Ogm::class,
+        ],
+        'ops' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Op::class,
+        ],
+        'os' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Os::class,
+        ],
     ],
 
     /*

@@ -57,4 +57,4 @@
   - generate a thumbnail for the video @done
   - add guard to the admin side
 
-- 
+- add job UpdateProductJob to asynchronous updates to forget cache

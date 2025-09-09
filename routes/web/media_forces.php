@@ -12,7 +12,7 @@ Route::prefix('media-forces')->group(function () {
   // Route::get('register', [MediaAuthController::class, 'showRegister'])->name('media_forces.register');
   Route::post('register', [MediaAuthController::class, 'register'])->name('media_forces.register.submit');
 
-  Route::middleware('auth:media_forces')->group(function () {
+  Route::middleware(['user_type:MediaForce'])->group(function () {
     Route::post('logout', [MediaAuthController::class, 'logout'])->name('media_forces.logout');
 
     Route::get('dashboard', [MediaDashboardController::class, 'index'])->name('media_forces.dashboard');
@@ -20,7 +20,7 @@ Route::prefix('media-forces')->group(function () {
   });
 
 
-  Route::prefix('videos')->middleware('auth:media_forces')->group(function () {
+  Route::prefix('videos')->middleware(['user_type:MediaForce'])->group(function () {
     Route::post('upload', [MediaVideoController::class, 'upload'])->name('media_forces.videos.upload');   // direct file upload
     Route::post('store',  [MediaVideoController::class, 'store'])->name('media_forces.videos.store');     // persist DB row
   });
